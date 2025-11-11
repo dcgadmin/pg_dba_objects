@@ -168,8 +168,9 @@ WHERE (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHER
   AND pg_catalog.pg_type_is_visible(t.oid)
   ON CONFLICT DO NOTHING;  
   
+
   INSERT INTO dba_objects_tracker (object_name, object_type, schema_name, status, created_date, last_ddl_time, ddl_operation)
-    SELECT p.proname, case prokind when 'f' then 'FUNCTION' when 'p' then 'PROCEDURE' when 'a' then 'AGGREGATE' when 'w' then 'WINDOW' end, n.nspname, 'VALID', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'INITIAL_LOAD'
+    SELECT p.proname || '(' || pg_catalog.pg_get_function_arguments(p.oid) || ')', case prokind when 'f' then 'FUNCTION' when 'p' then 'PROCEDURE' when 'a' then 'AGGREGATE' when 'w' then 'WINDOW' end, n.nspname, 'VALID', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'INITIAL_LOAD'
     FROM pg_proc p JOIN pg_namespace n ON p.pronamespace = n.oid
     WHERE n.nspname NOT IN ('information_schema', 'pg_catalog','dba_objects_pg')
     ON CONFLICT DO NOTHING;   
@@ -188,7 +189,10 @@ set search_path = dba_objects_pg, public;
 CREATE OR REPLACE VIEW dba_objects AS
 SELECT 
     object_id,
-    object_name,
+    case when object_type in ('FUNCTION','PROCEDURE')  
+    then regexp_replace(object_name, '(?:.*\.)?(\w+)\(.*', '\1') 
+    else object_name end object_name,
+    object_name as complete_functions_name,
     object_type,
     schema_name AS owner,
     status,
