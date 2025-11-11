@@ -70,17 +70,18 @@ You can run the script using the `psql` command-line tool:
 psql -U your_username -d your_database -f dba_object_event_trigger.sql
 ```
 
-After installation, you can query the `dba_objects` view to see the tracked objects:
-
-```sql
-SELECT * FROM dba_objects_pg.dba_objects;
-```
-
 To populate the tracker with existing objects, run the following function:
 
 ```sql
 SELECT populate_existing_objects(true); -- 'true' truncates the table before populating
 ```
+
+After Populate and installation, you can query the `dba_objects` view to see the tracked objects:
+
+```sql
+SELECT * FROM dba_objects_pg.dba_objects;
+```
+
 
 ## Usage Examples
 
