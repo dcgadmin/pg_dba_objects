@@ -1,4 +1,4 @@
-# PostgreSQL DDL Tracker
+# Tracking Database Objects: Bringing Oracle's DBA_OBJECTS to PostgreSQL
 
 If you've worked with Oracle databases, you know how handy `DBA_OBJECTS` is—it's like having a live inventory of everything in your database that tracks every table, index, function, and view. You can see when objects were created, last modified, and whether they're valid or broken.
 
